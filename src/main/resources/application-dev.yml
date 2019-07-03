@@ -1,0 +1,9 @@
+spring:
+  profiles: dev
+
+logging:
+  pattern:
+    console: "%d %-5level %logger : %msg%n"
+  level:
+    root: DEBUG
+

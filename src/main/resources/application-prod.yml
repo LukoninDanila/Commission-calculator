@@ -1,0 +1,8 @@
+spring:
+  profiles: prod
+
+logging:
+  pattern:
+    console: "%msg%n"
+  level:
+    root: ERROR
