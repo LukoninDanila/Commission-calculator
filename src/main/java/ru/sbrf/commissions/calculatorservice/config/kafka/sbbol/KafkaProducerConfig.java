@@ -19,19 +19,19 @@ import java.util.Map;
 @Component
 public class KafkaProducerConfig {
 
-    @Value(value = "spring.kafka.producer.bootstrap-servers")
+    @Value(value = "${spring.kafka.producer.bootstrap-servers}")
     private String bootstrapServers;
 
-    @Value(value = "spring.kafka.producer.group-id")
+    @Value(value = "${spring.kafka.producer.group-id}")
     private String groupId;
 
-    @Value(value = "spring.kafka.producer.topic-id")
+    @Value(value = "${spring.kafka.producer.topic-id}")
     private String topicId;
 
-    @Value(value = "spring.kafka.producer.key-serializer")
+    @Value(value = "${spring.kafka.producer.key-serializer}")
     private String keySerializer;
 
-    @Value(value = "spring.kafka.producer.value-serializer")
+    @Value(value = "${spring.kafka.producer.value-serializer}")
     private String valueSerializer;
 
     @Bean

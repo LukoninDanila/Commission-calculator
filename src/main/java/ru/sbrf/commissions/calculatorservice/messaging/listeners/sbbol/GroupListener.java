@@ -52,7 +52,7 @@ public class GroupListener {
         LOGGER.debug("Success: " + request);
     }*/
 
-    @KafkaListener(topics = "TEST_TOPIC", containerFactory = "sbbolListenerContainerFactory")
+    @KafkaListener(topics = "${spring.kafka.consumer.topic-id}", containerFactory = "sbbolListenerContainerFactory")
     public void listen(RequestFromSbbolDto request) {
         LOGGER.debug("Received: " + request);
         LOGGER.debug("Success: " + request);

@@ -63,17 +63,17 @@ public class KafkaConfig {
     }
 
 
-    @Bean
+    /*@Bean
     public ReplyingKafkaTemplate<String, AbstractDto, AbstractDto> replyKafkaTemplate(KafkaMessageListenerContainer<String, AbstractDto> replyContainer) {
         return new ReplyingKafkaTemplate<>(producerFactory(), replyContainer);
-    }
+    }*/
 
-    @Bean
+   /* @Bean
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public KafkaMessageListenerContainer<String, AbstractDto> replyContainer(ConsumerFactory<String, AbstractDto> consumerFactory) {
         ContainerProperties containerProperties = new ContainerProperties(kafkaConsumerConfig.getTopicId());
         return new KafkaMessageListenerContainer<>(consumerFactory, containerProperties);
-    }
+    }*/
 
     @Bean
     KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, AbstractDto>> sbbolListenerContainerFactory() {

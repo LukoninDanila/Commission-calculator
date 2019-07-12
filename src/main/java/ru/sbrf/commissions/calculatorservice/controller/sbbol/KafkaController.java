@@ -2,8 +2,13 @@ package ru.sbrf.commissions.calculatorservice.controller.sbbol;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.sbrf.commissions.calculatorservice.common.call.sbbol.RequestFromSbbolDto;
+import ru.sbrf.commissions.calculatorservice.messaging.producers.sbbol.Producer;
 
 @RestController
 @RequestMapping(value = "/kafka")
@@ -15,7 +20,7 @@ public class KafkaController {
     private static final String DIRECTION_FROM = ">>> ";
     private static final String DIRECTION_TO = "<<< ";
 
-   /* @Autowired
+    @Autowired
     public Producer producer;
 
     @PostMapping(value = "/publish")
@@ -24,5 +29,5 @@ public class KafkaController {
         RequestFromSbbolDto request = new RequestFromSbbolDto("my_name", "my_model");
 
         this.producer.sendMessage(request);
-    }*/
+    }
 }

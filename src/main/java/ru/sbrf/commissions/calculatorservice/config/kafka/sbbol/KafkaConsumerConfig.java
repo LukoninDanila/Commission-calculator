@@ -26,24 +26,24 @@ import java.util.Map;
 public class KafkaConsumerConfig {
 
     // Список пар хост:порт серверов Kafka
-    @Value(value = "spring.kafka.consumer.bootstrap-servers")
+    @Value(value = "${spring.kafka.consumer.bootstrap-servers}")
     private String bootstrapServers;
 
     // Идентификатор группы консьюмеров, в рамках которой доставляется один экземпляр сообщения
-    @Value(value = "spring.kafka.consumer.group-id")
+    @Value(value = "${spring.kafka.consumer.group-id}")
     private String groupId;
 
     // Наименование топика Kafka
-    @Value(value = "spring.kafka.consumer.topic-id")
+    @Value(value = "${spring.kafka.consumer.topic-id}")
     private String topicId;
 
-    @Value(value = "spring.kafka.consumer.auto-offset-reset")
+    @Value(value = "${spring.kafka.consumer.auto-offset-reset}")
     private String autoOffsetReset;
 
-    @Value(value = "spring.kafka.consumer.key-deserializer")
+    @Value(value = "${spring.kafka.consumer.key-deserializer}")
     private String keyDeserializer;
 
-    @Value(value = "spring.kafka.consumer.value-deserializer")
+    @Value(value = "${spring.kafka.consumer.value-deserializer}")
     private String valueDeserializer;
 
     @Autowired
