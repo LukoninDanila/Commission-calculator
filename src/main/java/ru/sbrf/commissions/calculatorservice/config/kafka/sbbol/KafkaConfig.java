@@ -1,6 +1,7 @@
 package ru.sbrf.commissions.calculatorservice.config.kafka.sbbol;
 
 import lombok.Data;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -17,7 +18,11 @@ import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
 import org.springframework.kafka.support.converter.BatchMessagingMessageConverter;
 import org.springframework.kafka.support.converter.StringJsonMessageConverter;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 import ru.sbrf.commissions.calculatorservice.common.AbstractDto;
+
+import javax.annotation.PostConstruct;
+import java.util.UUID;
 
 @Data
 @Configuration
@@ -84,14 +89,16 @@ public class KafkaConfig {
         return factory;
     }
 
+    @PostConstruct
+    private void init() {
+        instanceId = UUID.randomUUID().toString();
+    }
+
     private ConsumerFactory<String, AbstractDto> sbbolConsumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(kafkaConsumerConfig.sbbolConsumerConfigs());
+        return new DefaultKafkaConsumerFactory<>(kafkaConsumerConfig.sbbolConsumerConfigs(), new StringDeserializer(),
+                new JsonDeserializer<>(AbstractDto.class));
     }
 
     private String instanceId;
-
-    // TODO: После тестирования все, что ниже - УДАЛИТЬ!!!
-    public static String TOPIC_NAME = "TEST_TOPIC";
-    public static String GROUP_NAME = "TEST_GROUP";
 
 }

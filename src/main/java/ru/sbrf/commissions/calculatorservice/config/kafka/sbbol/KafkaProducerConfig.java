@@ -2,7 +2,6 @@ package ru.sbrf.commissions.calculatorservice.config.kafka.sbbol;
 
 import lombok.Data;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

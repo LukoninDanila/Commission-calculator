@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.sbrf.commissions.calculatorservice.common.call.sbbol.RequestFromSbbolDto;
 import ru.sbrf.commissions.calculatorservice.messaging.producers.sbbol.Producer;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 @RestController
 @RequestMapping(value = "/kafka")
 public class KafkaController {
@@ -26,7 +29,7 @@ public class KafkaController {
     @PostMapping(value = "/publish")
     public void sendMessageToKafkaTopic(@RequestParam("message") String message){
         LOGGER.debug(HEADER_MSG + DIRECTION_FROM);
-        RequestFromSbbolDto request = new RequestFromSbbolDto("my_name", "my_model");
+        RequestFromSbbolDto request = new RequestFromSbbolDto(UUID.randomUUID(), LocalDateTime.now(), LocalDateTime.now(), "my_name", "my_model");
 
         this.producer.sendMessage(request);
     }

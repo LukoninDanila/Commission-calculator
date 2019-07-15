@@ -54,8 +54,10 @@ public class GroupListener {
 
     @KafkaListener(topics = "${spring.kafka.consumer.topic-id}", containerFactory = "sbbolListenerContainerFactory")
     public void listen(RequestFromSbbolDto request) {
-        LOGGER.debug("Received: " + request);
-        LOGGER.debug("Success: " + request);
+        LOGGER.info("\n\n\n>>>");
+        LOGGER.info("Received: " + request);
+        LOGGER.info("Success: " + request);
+        LOGGER.info("\n\n\n>>>");
     }
 
 }

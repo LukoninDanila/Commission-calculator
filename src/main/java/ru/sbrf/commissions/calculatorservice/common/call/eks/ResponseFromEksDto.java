@@ -13,4 +13,14 @@ import ru.sbrf.commissions.calculatorservice.common.AbstractDto;
 public class ResponseFromEksDto extends AbstractDto {
     private String name;
     private String model;
+
+    @Override
+    public String createHeader() {
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return null;
+    }
 }

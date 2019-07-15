@@ -6,6 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import ru.sbrf.commissions.calculatorservice.common.AbstractDto;
 import ru.sbrf.commissions.calculatorservice.common.call.sbbol.RequestFromSbbolDto;
@@ -27,10 +30,17 @@ public class Producer {
 
     /**
      *
-     * @param message
+     * @param request
      */
-    public void sendMessage(RequestFromSbbolDto message){
-        LOGGER.info(String.format("$$ -> Producing message --> %s", message));
-        this.kafkaTemplate.send(kafkaConfig.TOPIC_NAME, message);
+    public void sendMessage(RequestFromSbbolDto request){
+        final String topicId = kafkaConfig.getKafkaProducerConfig().getTopicId();
+        LOGGER.info("sending data='{}' to topic='{}'", request, topicId);
+
+        Message<RequestFromSbbolDto> message = MessageBuilder
+                .withPayload(request)
+                .setHeader(KafkaHeaders.TOPIC, topicId)
+                .build();
+
+        kafkaTemplate.send(message);
     }
 }
