@@ -40,13 +40,9 @@ public class CalculatorServiceApplication {
         return new StringJsonMessageConverter();
     }
 
-
     @PostConstruct
     public void init() {
         LOGGER.debug("--Application initialise phase--");
-        /*kafkaEksConfig().setInstanceId(UUID.randomUUID().toString());
-        LOGGER.info(">> Configure phase: post-construct");
-        LOGGER.info(">>> Set Instance application ID: " + kafkaEksConfig().getInstanceId());*/
     }
 
     @PreDestroy

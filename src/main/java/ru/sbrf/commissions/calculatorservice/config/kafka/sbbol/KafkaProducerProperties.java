@@ -5,9 +5,13 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,10 +20,10 @@ import java.util.Map;
  */
 @Data
 @Component
-public class KafkaProducerConfig {
+public class KafkaProducerProperties {
 
     @Value(value = "${spring.kafka.producer.bootstrap-servers}")
-    private String bootstrapServers;
+    private ArrayList bootstrapServers;
 
     @Value(value = "${spring.kafka.producer.group-id}")
     private String groupId;
@@ -33,17 +37,14 @@ public class KafkaProducerConfig {
     @Value(value = "${spring.kafka.producer.value-serializer}")
     private String valueSerializer;
 
-    @Bean
-    public Map<String, Object> producerConfigs() {
+    @Bean(name = "sbbolProducerProperties")
+    public Map<String, Object> producerProperties() {
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers());
-        //TODO: Добавить groupId и topicId
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        /*if (!getProperties().isEmpty()) {
-            props.putAll(getProperties());
-        }*/
 
         return props;
     }
+
 }

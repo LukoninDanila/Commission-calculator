@@ -11,23 +11,9 @@ import ru.sbrf.commissions.calculatorservice.common.AbstractDto;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ResponseToSbbolDto extends AbstractDto {
+
     private String name;
+
     private String model;
 
-    @Override
-    public String createHeader() {
-        return null;
-    }
-
-    @Override
-    public String toString() {
-        return /*new StringBuilder()
-                .append(createHeader())
-                .append(fieldsToString())
-                .append("name='")
-                .append(getName()).append('\'')
-                .append(", model='").append(getModel()).append('\'')
-                .append(createEnding())
-                .toString();*/ null;
-    }
 }

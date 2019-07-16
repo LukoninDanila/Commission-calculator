@@ -10,7 +10,6 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
-import ru.sbrf.commissions.calculatorservice.common.AbstractDto;
 import ru.sbrf.commissions.calculatorservice.common.call.sbbol.RequestFromSbbolDto;
 import ru.sbrf.commissions.calculatorservice.config.kafka.sbbol.KafkaConfig;
 
@@ -25,15 +24,13 @@ public class Producer {
     private KafkaConfig kafkaConfig;
 
     @Autowired
-    private KafkaTemplate<String, AbstractDto> kafkaTemplate;
-
+    private KafkaTemplate<String, Object> kafkaTemplate;
 
     /**
-     *
      * @param request
      */
-    public void sendMessage(RequestFromSbbolDto request){
-        final String topicId = kafkaConfig.getKafkaProducerConfig().getTopicId();
+    public void sendMessage(RequestFromSbbolDto request) {
+        final String topicId = kafkaConfig.getKafkaProducerProperties().getTopicId();
         LOGGER.info("sending data='{}' to topic='{}'", request, topicId);
 
         Message<RequestFromSbbolDto> message = MessageBuilder

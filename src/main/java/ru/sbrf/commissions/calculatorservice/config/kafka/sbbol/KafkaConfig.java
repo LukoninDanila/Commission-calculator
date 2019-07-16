@@ -1,104 +1,134 @@
 package ru.sbrf.commissions.calculatorservice.config.kafka.sbbol;
 
 import lombok.Data;
+import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
-import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
-import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
-import org.springframework.kafka.listener.ContainerProperties;
-import org.springframework.kafka.listener.KafkaMessageListenerContainer;
-import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
-import org.springframework.kafka.support.converter.BatchMessagingMessageConverter;
-import org.springframework.kafka.support.converter.StringJsonMessageConverter;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import ru.sbrf.commissions.calculatorservice.common.AbstractDto;
 
 import javax.annotation.PostConstruct;
-import java.util.UUID;
+import java.util.Map;
 
 @Data
 @Configuration
 @EnableKafka
 public class KafkaConfig {
 
-    private KafkaProducerConfig kafkaProducerConfig;
+    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConfig.class);
 
-    private KafkaConsumerConfig kafkaConsumerConfig;
+    private KafkaProducerProperties kafkaProducerProperties;
 
-    public KafkaConfig(KafkaProducerConfig kafkaProducerConfig, KafkaConsumerConfig kafkaConsumerConfig) {
-        this.kafkaProducerConfig = kafkaProducerConfig;
-        this.kafkaConsumerConfig = kafkaConsumerConfig;
-    }
+    private KafkaConsumerProperties kafkaConsumerProperties;
 
-    private ProducerFactory<String, AbstractDto> producerFactory() {
-        return new DefaultKafkaProducerFactory<>(kafkaProducerConfig.producerConfigs());
+    @Autowired
+    private KafkaProperties kafkaProperties;
+
+    public KafkaConfig(KafkaProducerProperties kafkaProducerProperties,
+                       KafkaConsumerProperties kafkaConsumerProperties) {
+        this.kafkaProducerProperties = kafkaProducerProperties;
+        this.kafkaConsumerProperties = kafkaConsumerProperties;
     }
 
     @Bean
-    public KafkaTemplate<String, AbstractDto> kafkaTemplate() {
-        KafkaTemplate<String, AbstractDto> template = new KafkaTemplate<>(producerFactory());
-        template.setMessageConverter(new StringJsonMessageConverter());
-        return template;
+    @Qualifier("sbbolProducerConfigs")
+    @DependsOn("kafkaProducerProperties")
+    public Map<String, Object> producerConfigs() {
+        return kafkaProducerProperties.producerProperties();
     }
 
-    /**
-     *
-     * @return
-     */
     @Bean
-    public KafkaListenerContainerFactory<?> consumerBatchFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, AbstractDto> factory =
+    @Qualifier("sbbolProducerFactory")
+    public ProducerFactory<String, Object> producerFactory() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    @Bean
+    @Qualifier("sbbolProducerKafkaTemplate")
+    public KafkaTemplate<String, Object> kafkaTemplate() {
+        return new KafkaTemplate<>(producerFactory());
+    }
+
+    @Bean
+    @Qualifier("sbbolConsumerFactory")
+    @DependsOn("kafkaConsumerProperties")
+    public ConsumerFactory<String, Object> consumerFactory() {
+        final JsonDeserializer<Object> jsonDeserializer = new JsonDeserializer<>();
+        jsonDeserializer.addTrustedPackages("*");
+        return new DefaultKafkaConsumerFactory<>(
+                kafkaConsumerProperties.consumerProperties(),
+                new StringDeserializer(),
+                jsonDeserializer);
+    }
+
+    @Bean
+    @Qualifier("sbbolKafkaListenerContainerFactory")
+    public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, Object> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(new DefaultKafkaConsumerFactory<>(kafkaConsumerConfig.sbbolConsumerConfigs()));
-        factory.setBatchListener(true);
-
-        // Указываем в качестве конвертера специальный конвертер пакетов,
-        // который будет конвертировать пакеты, состоящие из JSON-строк
-        factory.setMessageConverter(new BatchMessagingMessageConverter(kafkaConsumerConfig.getConverter()));
+        factory.setConsumerFactory(consumerFactory());
 
         return factory;
     }
 
-
-    /*@Bean
-    public ReplyingKafkaTemplate<String, AbstractDto, AbstractDto> replyKafkaTemplate(KafkaMessageListenerContainer<String, AbstractDto> replyContainer) {
-        return new ReplyingKafkaTemplate<>(producerFactory(), replyContainer);
-    }*/
-
-   /* @Bean
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    public KafkaMessageListenerContainer<String, AbstractDto> replyContainer(ConsumerFactory<String, AbstractDto> consumerFactory) {
-        ContainerProperties containerProperties = new ContainerProperties(kafkaConsumerConfig.getTopicId());
-        return new KafkaMessageListenerContainer<>(consumerFactory, containerProperties);
-    }*/
+    @Bean
+    @Qualifier("sbbolStringConsumerFactory")
+    @DependsOn("kafkaConsumerProperties")
+    public ConsumerFactory<String, String> stringConsumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(
+                kafkaConsumerProperties.consumerProperties(),
+                new StringDeserializer(),
+                new StringDeserializer());
+    }
 
     @Bean
-    KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, AbstractDto>> sbbolListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, AbstractDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(sbbolConsumerFactory());
-        factory.setReplyTemplate(kafkaTemplate());
+    @Qualifier("sbbolKafkaListenerStringContainerFactory")
+    public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerStringContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, String> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(stringConsumerFactory());
+
+        return factory;
+    }
+
+    @Bean
+    @Qualifier("sbbolByteArrayConsumerFactory")
+    @DependsOn("kafkaConsumerProperties")
+    public ConsumerFactory<String, byte[]> byteArrayConsumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(
+                kafkaConsumerProperties.consumerProperties(),
+                new StringDeserializer(),
+                new ByteArrayDeserializer());
+    }
+
+    @Bean
+    @Qualifier("sbbolKafkaListenerByteArrayContainerFactory")
+    public ConcurrentKafkaListenerContainerFactory<String, byte[]> kafkaListenerByteArrayContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, byte[]> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(byteArrayConsumerFactory());
 
         return factory;
     }
 
     @PostConstruct
     private void init() {
-        instanceId = UUID.randomUUID().toString();
+        LOGGER.info("### >>> Configure phase: post-construct");
+        LOGGER.info("### >>> Consumer properties: " + getKafkaConsumerProperties().consumerProperties());
+        LOGGER.info("### >>> Producer properties: " + getKafkaProducerProperties().producerProperties());
     }
-
-    private ConsumerFactory<String, AbstractDto> sbbolConsumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(kafkaConsumerConfig.sbbolConsumerConfigs(), new StringDeserializer(),
-                new JsonDeserializer<>(AbstractDto.class));
-    }
-
-    private String instanceId;
 
 }

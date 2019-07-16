@@ -12,12 +12,16 @@ import ru.sbrf.commissions.calculatorservice.messaging.producers.sbbol.Producer;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 
+/*
 @RestController
 @RequestMapping(value = "/kafka")
 public class KafkaController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaController.class);
+
+    private CountDownLatch latch;
 
     private static final String HEADER_MSG = "Controller: SBBOL ";
     private static final String DIRECTION_FROM = ">>> ";
@@ -29,8 +33,8 @@ public class KafkaController {
     @PostMapping(value = "/publish")
     public void sendMessageToKafkaTopic(@RequestParam("message") String message){
         LOGGER.debug(HEADER_MSG + DIRECTION_FROM);
-        RequestFromSbbolDto request = new RequestFromSbbolDto(UUID.randomUUID(), LocalDateTime.now(), LocalDateTime.now(), "my_name", "my_model");
+        RequestFromSbbolDto request = new RequestFromSbbolDto("my_name", "my_model");
 
         this.producer.sendMessage(request);
     }
-}
+}*/
