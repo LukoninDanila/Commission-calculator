@@ -14,9 +14,9 @@ import java.util.UUID;
 
 @Data
 @Configuration
-public class Config {
+public class ConfigurationApp {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationApp.class);
 
     /**
      * Уникальный идентификатор запущенного приложения

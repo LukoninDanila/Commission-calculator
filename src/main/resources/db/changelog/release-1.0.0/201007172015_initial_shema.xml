@@ -1,0 +1,69 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+                   http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="201907172015" author="User: Lukonin Danila Viktorovich Email: Lukonin.D.Vik@sberbank.ru"
+               context="schema" runAlways="false">
+
+        <createTable tableName="request" remarks="Запросы на расчет комиссии"
+                     catalogName="eks_db">
+
+            <column name="id" type="INT" valueComputed="seq_id.nextval">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="org_id" type="VARCHAR2(50)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="branch_id" type="VARCHAR2(50)"/>
+
+            <column name="version" type="NUMBER">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="doc_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="global_doc_id" type="VARCHAR2(36)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="doc_account" type="VARCHAR2(35)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="doc_sum" type="NUMBER(18, 2)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="doc_sum_currency" type="VARCHAR2(3)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="doc_ref_for_ext" type="VARCHAR2(36)"/>
+
+            <column name="sending_system_code" type="VARCHAR2(255)"/>
+
+            <column name="request_state" type="VARCHAR2(50)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="source" type="VARCHAR2(36)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createSequence catalogName="eks_db" incrementBy="1"
+                        schemaName="public" sequenceName="seq_id"/>
+
+        <rollback>
+            <dropTable catalogName="eks_db" tableName="request"/>
+
+            <dropSequence catalogName="eks_db" schemaName="public" sequenceName="seq_id"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
