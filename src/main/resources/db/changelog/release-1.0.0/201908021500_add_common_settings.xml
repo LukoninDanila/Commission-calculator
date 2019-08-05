@@ -1,0 +1,45 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+                   http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="201908021500" author="User: Lukonin Danila Viktorovich Email: Lukonin.D.Vik@sberbank.ru"
+               context="schema" runAlways="false">
+
+        <createTable tableName="common_settings" remarks="Справочник системных параметров"
+                     catalogName="eks_db">
+
+            <column name="id" type="INT" valueComputed="common_settings_id_seq.nextval">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="code" type="VARCHAR2(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="value" type="VARCHAR2(4000)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="comment" type="VARCHAR2(1000)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint catalogName="eks_db"
+                             columnNames="code"
+                             constraintName="uk_common_settings_name"
+                             schemaName="public"
+                             tableName="common_settings"/>
+
+        <createSequence catalogName="eks_db" incrementBy="1"
+                        schemaName="public" sequenceName="pk_common_settings_id_seq"/>
+
+        <rollback>
+            <dropTable catalogName="eks_db" tableName="common_settings"/>
+
+            <dropSequence catalogName="eks_db" schemaName="public" sequenceName="common_settings_id_seq"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

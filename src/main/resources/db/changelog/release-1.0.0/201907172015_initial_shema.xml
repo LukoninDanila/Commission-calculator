@@ -10,7 +10,7 @@
         <createTable tableName="request" remarks="Запросы на расчет комиссии"
                      catalogName="eks_db">
 
-            <column name="id" type="INT" valueComputed="seq_id.nextval">
+            <column name="id" type="INT" valueComputed="pk_request_id_seq.nextval">
                 <constraints primaryKey="true"/>
             </column>
 
@@ -58,12 +58,12 @@
         </createTable>
 
         <createSequence catalogName="eks_db" incrementBy="1"
-                        schemaName="public" sequenceName="seq_id"/>
+                        schemaName="public" sequenceName="pk_request_id_seq"/>
 
         <rollback>
             <dropTable catalogName="eks_db" tableName="request"/>
 
-            <dropSequence catalogName="eks_db" schemaName="public" sequenceName="seq_id"/>
+            <dropSequence catalogName="eks_db" schemaName="public" sequenceName="pk_request_id_seq"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>
